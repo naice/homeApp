@@ -1,0 +1,12 @@
+mat-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+div {
+  flex: 1;
+}
+mat-slide-toggle {
+  flex: content;
+}

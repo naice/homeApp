@@ -1,0 +1,25 @@
+<mat-card>
+  <div class="temp-container">
+    <div class="temp-current text-blue-glow">{{ tempCurrentLabel$ | async }}</div>
+    <div class="temp-target  text-blue-glow">{{ tempTargetLabel$  | async }}</div>
+  </div>
+  <div class="button-flex">
+    <button mat-icon-button (click)="reduceTemp()" class="text-blue-glow">
+      <mat-icon>remove</mat-icon>
+    </button>
+    <div class="slider-container">
+      <div class="slider-tempsteps">
+      </div>
+      <mat-slider
+        class="mat-slider-notrack"
+        [min]="min$ | async"
+        [max]="max$ | async"
+        step="1"
+        (change)="setTempTarget($event)"
+        [value]="tempTarget"></mat-slider>
+    </div>
+    <button mat-icon-button (click)="increaseTemp()" class="text-blue-glow">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</mat-card>

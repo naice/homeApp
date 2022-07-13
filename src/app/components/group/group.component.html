@@ -1,0 +1,8 @@
+<h1>
+{{ name$ | async }}
+</h1>
+<ng-container *ngIf="outletInfo$ | async as outletInfo">
+  <ng-container
+    *ngComponentOutlet="outletInfo.component; injector: outletInfo.injector">
+  </ng-container>
+</ng-container>

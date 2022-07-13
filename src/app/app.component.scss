@@ -1,0 +1,26 @@
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.app-layout-grid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.app-layout-drawer {
+  flex:1;
+
+  mat-drawer-container {
+    position: relative;
+    height: 100%;
+  }
+
+  mat-drawer-content {
+    padding: 16px;
+  }
+}
+
+.navigation-item {
+}

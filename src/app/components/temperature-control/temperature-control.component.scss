@@ -1,0 +1,48 @@
+@import "../../../color.scss";
+
+.slider-container {
+  display: grid;
+}
+
+.slider-tempsteps {
+  grid-column: 1;
+  grid-row: 1;
+  margin-top: 22px;
+  height: 2px;
+  background: linear-gradient(to right, cornflowerblue, darkgoldenrod, crimson);
+  margin-left: 8px; margin-right: 8px;
+}
+
+mat-slider {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+}
+
+.temp-container {
+  margin: 0 auto;
+}
+.temp-current {
+  flex: 1;
+  font-size: 2em;
+  text-align: center;
+}
+.temp-target {
+  flex: content;
+  font-size: 1em;
+  text-align: center;
+}
+.button-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  button {
+    flex: content;
+  }
+  div {
+    font-size: 1.5em;
+    flex: 1;
+    text-align: center;
+  }
+}

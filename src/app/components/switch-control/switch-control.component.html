@@ -1,0 +1,4 @@
+<mat-card>
+  <div class="text-pink-glow">{{ name$ | async }}</div>
+  <mat-slide-toggle (change)="updateToggleState($event)" [checked]="checked$ | async"></mat-slide-toggle>
+</mat-card>

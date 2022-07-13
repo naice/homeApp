@@ -1,1 +1,44 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import "color.scss";
+
+html, body { height: 100%; margin: 0; }
+body {
+  box-sizing: border-box;
+  color: $foregroundA;
+  background-color: $background01;
+  font-family:
+  Roboto, "Helvetica Neue", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+.mat-card {
+  max-width: 400px;
+  background-color: $background02;
+}
+.mat-slide-toggle-thumb {
+  box-shadow: 0 0 10px $foregroundA;
+}
+
+.mat-slider-notrack {
+  .mat-slider-track-fill,
+  .mat-slider-wrapper,
+  .mat-slider-track-wrapper,
+  .mat-slider-track-background {
+      height: 0px !important;
+  }
+}
+
+.mat-drawer {
+  background-color: $background03;
+  color: $foregroundA;
+}
+.mat-drawer-container {
+  background-color: $background01;
+  color: $foregroundA;
+}
