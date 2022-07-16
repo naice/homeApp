@@ -1,1 +1,19 @@
-<p>garage-control works!</p>
+<ng-container *ngIf="!(isLoading$  | async)">
+  <mat-card>
+    <div *ngIf="(carIcon$ | async) as carIcon" class="icon-text text-pink-glow">
+      <mat-icon [svgIcon]="carIcon"></mat-icon>
+      {{ carText$ | async }}
+    </div>
+  </mat-card>
+  <br>
+  <app-button-card-control
+    (buttonClick)="garageButtonClicked()"
+    [buttonText]="'Open/Close'"
+    [titleIcon]="'garage'"
+    [titleText]="'Garage'"
+  >
+  </app-button-card-control>
+</ng-container>
+<ng-container *ngIf="isLoading$  | async">
+  Loading... {{ (state$ | async)?.error }}
+</ng-container>

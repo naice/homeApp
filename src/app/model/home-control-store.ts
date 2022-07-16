@@ -9,15 +9,16 @@ export abstract class ActionHandler {
 
 export const GROUP_CONFIG = new InjectionToken<unknown>('GROUP_CONFIG');
 
-export interface Group {
+export interface HomeControlConfig {
   id: string;
+  icon?: string;
   name: string;
   homeControlType: Type<unknown>;
   config?: unknown;
 }
 
 @Injectable()
-export class GroupStore extends ComponentStore<Group> {
+export class HomeControlStore extends ComponentStore<HomeControlConfig> {
     constructor(protected injector: Injector) {
       super(groupMock03);
     }

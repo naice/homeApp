@@ -1,0 +1,16 @@
+<mat-card>
+  <ng-container *ngIf="titleText || titleIcon">
+    <div class="text-pink-glow icon-text">
+      {{ titleText }}
+      <ng-container *ngIf="titleIcon">
+          <mat-icon [svgIcon]="titleIcon"></mat-icon>
+      </ng-container>
+    </div>
+  </ng-container>
+  <button mat-button color="primary" (click)="buttonClick.next($event)">
+    <ng-container *ngIf="buttonIcon">
+      <mat-icon [svgIcon]="buttonIcon" class="text-pink-glow"></mat-icon>
+    </ng-container>
+    {{ buttonText }}
+  </button>
+</mat-card>

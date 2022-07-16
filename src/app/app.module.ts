@@ -7,8 +7,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TemperatureControlComponent } from './components/temperature-control/temperature-control.component';
 import { MaterialModule } from './material.module';
 import { SwitchControlComponent } from './components/switch-control/switch-control.component';
-import { GroupComponent } from './components/group/group.component';
-import { ButtonControlComponent } from './components/button-control/button-control.component';
+import { HomeControlHostComponent } from './components/home-control-host/home-control-host.component';
+import { ButtonCardControlComponent } from './components/button-card-control/button-card-control.component';
 import { MatIconRegistry } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { GarageControlComponent } from './components/home-controls/garage-control/garage-control.component';
@@ -18,8 +18,8 @@ import { GarageControlComponent } from './components/home-controls/garage-contro
     AppComponent,
     TemperatureControlComponent,
     SwitchControlComponent,
-    GroupComponent,
-    ButtonControlComponent,
+    HomeControlHostComponent,
+    ButtonCardControlComponent,
     GarageControlComponent,
   ],
   imports: [

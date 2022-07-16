@@ -17,6 +17,14 @@ body {
   box-sizing: inherit;
 }
 
+.mat-icon {
+  vertical-align: middle;
+}
+.icon-text {
+  display: flex;
+  align-items: center;
+}
+
 .mat-card {
   max-width: 400px;
   background-color: $background02;

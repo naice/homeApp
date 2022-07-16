@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GroupComponent } from './group.component';
+import { ButtonCardControlComponent } from './button-card-control.component';
 
-describe('GroupComponent', () => {
-  let component: GroupComponent;
-  let fixture: ComponentFixture<GroupComponent>;
+describe('ButtonControlComponent', () => {
+  let component: ButtonCardControlComponent;
+  let fixture: ComponentFixture<ButtonCardControlComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GroupComponent ]
+      declarations: [ ButtonCardControlComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GroupComponent);
+    fixture = TestBed.createComponent(ButtonCardControlComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

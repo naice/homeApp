@@ -1,5 +1,6 @@
-<h1>
+<h1 class="icon-text">
 {{ name$ | async }}
+<mat-icon *ngIf="(icon$ | async) as icon" [svgIcon]="icon" ></mat-icon>
 </h1>
 <ng-container *ngIf="outletInfo$ | async as outletInfo">
   <ng-container

@@ -1,5 +1,5 @@
 
 export interface GarageControlConfig
 {
-  name: string,
+  registerNames: string[],
 }

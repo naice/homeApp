@@ -1,5 +1,6 @@
+import { GarageControlConfig } from "../components/home-controls/garage-control/config";
 import { GarageControlComponent } from "../components/home-controls/garage-control/garage-control.component";
-import { Group } from "./group";
+import { HomeControlConfig } from "./home-control-store";
 
 // export const groupMock01: Group = {
 //   id: "mock-group",
@@ -74,15 +75,16 @@ import { Group } from "./group";
 //     },
 //   ]
 // }
-export const groupMock03: Group = {
+export const groupMock03: HomeControlConfig = {
   id: "mock-group-03",
+  icon: "garage",
   name: "Garage",
   homeControlType: GarageControlComponent,
   config: {
-    name: "123",
-  },
+    registerNames: ["GarageESP", "TeslaWallboxGen3"],
+  } as GarageControlConfig,
 }
-export const groupsMock: Group[] = [
+export const groupsMock: HomeControlConfig[] = [
   //groupMock01,
   //groupMock02,
   groupMock03,

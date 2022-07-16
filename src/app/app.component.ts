@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
 import { AppStore } from './model/app.store';
-import { Group } from './model/group';
+import { HomeControlConfig } from './model/home-control-store';
 
 @Component({
   selector: 'app-root',
@@ -19,25 +19,25 @@ export class AppComponent {
     distinctUntilChanged(),
     tap((groups) => this.updateSelectedGroup(groups))
   );
-  public selectedGroup = new BehaviorSubject<Group | undefined>(undefined);
-  public selectedGroup$ = this.selectedGroup.asObservable();
+  public selectedHomeControlConfig = new BehaviorSubject<HomeControlConfig | undefined>(undefined);
+  public selectedHomeControlConfig$ = this.selectedHomeControlConfig.asObservable();
 
   constructor(
     protected appStore: AppStore,
   ) { }
 
-  private updateSelectedGroup(groups: Group[]) {
-    const currentSelection = this.selectedGroup.getValue();
+  private updateSelectedGroup(groups: HomeControlConfig[]) {
+    const currentSelection = this.selectedHomeControlConfig.getValue();
     if (!currentSelection) {
-      this.selectedGroup.next(groups[0]);
+      this.selectedHomeControlConfig.next(groups[0]);
       return;
     }
     const updatedSelection = groups.find((item) => item.id === currentSelection.id);
     if (!updatedSelection) {
-      this.selectedGroup.next(groups[0]);
+      this.selectedHomeControlConfig.next(groups[0]);
       return;
     }
-    this.selectedGroup.next(updatedSelection);
+    this.selectedHomeControlConfig.next(updatedSelection);
   }
 }
 

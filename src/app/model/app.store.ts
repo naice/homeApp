@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import { ComponentStore } from "@ngrx/component-store";
 import { map } from "rxjs/operators";
-import { Group } from "./group";
+import { HomeControlConfig } from "./home-control-store";
 import { groupsMock } from "./group-mock";
 
 export interface AppState {
-  groups: Group[]
+  groups: HomeControlConfig[]
 }
 
 @Injectable()
