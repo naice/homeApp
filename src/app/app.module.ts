@@ -12,6 +12,7 @@ import { ButtonCardControlComponent } from './components/button-card-control/but
 import { MatIconRegistry } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { GarageControlComponent } from './components/home-controls/garage-control/garage-control.component';
+import { TemperaturesComponent } from './components/home-controls/temperatures/temperatures.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { GarageControlComponent } from './components/home-controls/garage-contro
     HomeControlHostComponent,
     ButtonCardControlComponent,
     GarageControlComponent,
+    TemperaturesComponent,
   ],
   imports: [
     HttpClientModule,
@@ -36,5 +38,9 @@ export class AppModule {
   constructor(iconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) {
     iconRegistry.addSvgIconSet(
       domSanitizer.bypassSecurityTrustResourceUrl('./assets/mdi.svg')
+    );
+    iconRegistry.addSvgIcon(
+      "model-3-text",
+      domSanitizer.bypassSecurityTrustResourceUrl('./assets/tesla-model-3.svg')
     );
   }}

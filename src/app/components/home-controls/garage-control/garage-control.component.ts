@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GarageStore, GarageCarState } from './store';
-import { map, take, } from "rxjs/operators";
+import { map, take, takeUntil, timeout, } from "rxjs/operators";
+import { BehaviorSubject, interval, of, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-garage-control',
@@ -11,12 +12,15 @@ import { map, take, } from "rxjs/operators";
     GarageStore
   ]
 })
-export class GarageControlComponent implements OnInit {
+export class GarageControlComponent implements OnInit, OnDestroy {
 
   constructor(
     protected readonly http: HttpClient,
     protected readonly store: GarageStore,
   ) { }
+
+  public destroyS = new Subject();
+  public destory$ = this.destroyS.asObservable();
 
   public state$ = this.store.state$;
   public isLoading$ = this.store.select((state) => state.isLoading);
@@ -39,27 +43,67 @@ export class GarageControlComponent implements OnInit {
   public carText$ = this.carState$.pipe(
     map((carState) => {
       if (carState === GarageCarState.CHARGING) {
-        return "Tesla lädt.";
+        return "Lädt";
       }
       if (carState === GarageCarState.PARKING) {
-        return "Tesla parkt.";
+        return "Parkt";
       }
       if (carState === GarageCarState.EMPTY) {
         return "Garage leer.";
       }
-      return "Keine infos.";
+      return "";
     })
   );
+  public doorState$ = this.store.select((state) => state.data?.garageClosed);
+  public doorIcon$ = this.doorState$.pipe(map((open) => {
+    console.log(open);
+    if (open === undefined || open === null) {
+      return "alert-decagram";
+    }
+    if (open === 1) {
+      return "garage";
+    }
+    return "garage-open";
+  }));
+  public doorText$ = this.doorState$.pipe(map((open) => {
+    if (open === undefined || open === null) {
+      return "";
+    }
+    if (open === 1) {
+      return "Garage geschlossen";
+    }
+    return "Garage offen";
+  }));
+  public doorButtonText$ = this.doorState$.pipe(map((open) => {
+    if (open === undefined || open === null) {
+      return "kein Zugriff";
+    }
+    if (open === 1) {
+      return "Öffnen";
+    }
+    return "Schließen";
+  }));
 
-  ngOnInit(): void {
-    //this.store.state$.pipe(take(1)).subscribe((state) => this.store.updateRegister(state.registerName));
+  ngOnInit(): void {}
+  ngOnDestroy(): void {
+    this.destroyS.next();
   }
 
   public garageButtonClicked(): void {
     console.log("GARAGE BUTTON CLICK");
-    this.store.toggleGarageDoor().pipe(take(1)).subscribe((result) => {
-      console.log("GARAGE DOOR REQUEST " + result);
-    });
+    this.store.toggleGarageDoor().pipe(take(1)).subscribe(
+      (result) => {
+        console.log("GARAGE DOOR REQUEST " + result);
+        if (result) {
+          navigator.vibrate([500]);
+        } else {
+          navigator.vibrate([250, 250, 500]);
+        }
+      },
+      (error) => {
+        navigator.vibrate([250, 250, 500]);
+      }
+    );
   }
 
 }

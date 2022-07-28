@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { ComponentStore, tapResponse } from "@ngrx/component-store";
-import { combineLatest, EMPTY, Observable, of, range } from "rxjs";
+import { combineLatest, EMPTY, interval, Observable, of, range } from "rxjs";
 import { map, take, concatMap, } from "rxjs/operators";
 import { GROUP_CONFIG } from "src/app/model/home-control-store";
 import { RegisterMeService, RegisterObject } from "src/app/services/register-me.service";
@@ -15,10 +15,15 @@ export enum GarageCarState {
   UNKNOWN = "UNKNOWN",
 }
 
+interface GarageESP {
+  distance: number,
+  garageClosed: number,
+}
 
 export interface GarageData {
   vehicle_connected?: boolean,
   distance?: number,
+  garageClosed?: number,
   open?: boolean,
   carState: GarageCarState,
 }
@@ -62,18 +67,17 @@ export class GarageStore extends ComponentStore<GarageState> {
     private registerNames$ = this.select((state) => state.registerNames);
 
     public updateData = this.effect(() =>
-      this.registerObjects$.pipe(
-        concatMap(([garageESP, wallbox]) => {
+      combineLatest([this.registerObjects$, interval(2000)]).pipe(
+        concatMap(([[garageESP, wallbox]]) => {
         if  (!garageESP || !wallbox) {
           return EMPTY;
         }
         return combineLatest([
-          this.registerService.request<{ distance: number }>(garageESP, "GET_info"),
+          this.registerService.request<GarageESP>(garageESP, "GET_info"),
           this.registerService.request<{ vehicle_connected: boolean }>(wallbox, "GET_VITALS"),
         ]).pipe(
           tapResponse(([garage, wallbox]) =>
           {
-            console.log(garage);
             const carState = this.getCarState(garage, wallbox);
             this.setGarageData({
               ...garage, ...wallbox, carState

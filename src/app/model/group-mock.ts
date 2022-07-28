@@ -1,5 +1,6 @@
 import { GarageControlConfig } from "../components/home-controls/garage-control/config";
 import { GarageControlComponent } from "../components/home-controls/garage-control/garage-control.component";
+import { TemperaturesComponent, TemperaturesComponentConfig } from "../components/home-controls/temperatures/temperatures.component";
 import { HomeControlConfig } from "./home-control-store";
 
 // export const groupMock01: Group = {
@@ -84,8 +85,20 @@ export const groupMock03: HomeControlConfig = {
     registerNames: ["GarageESP", "TeslaWallboxGen3"],
   } as GarageControlConfig,
 }
+
+export const groupTemps: HomeControlConfig = {
+  id: "temperatures",
+  icon: "thermometer",
+  name: "Temperaturen",
+  homeControlType: TemperaturesComponent,
+  config: {
+
+  } as TemperaturesComponentConfig
+}
+
 export const groupsMock: HomeControlConfig[] = [
   //groupMock01,
   //groupMock02,
   groupMock03,
+  groupTemps
 ];

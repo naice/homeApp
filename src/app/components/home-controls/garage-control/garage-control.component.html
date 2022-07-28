@@ -1,16 +1,27 @@
 <ng-container *ngIf="!(isLoading$  | async)">
   <mat-card>
-    <div *ngIf="(carIcon$ | async) as carIcon" class="icon-text text-pink-glow">
-      <mat-icon [svgIcon]="carIcon"></mat-icon>
-      {{ carText$ | async }}
+    <div *ngIf="(doorIcon$ | async) as doorIcon" class="icon-text text-pink-glow flex-container">
+      <mat-icon [svgIcon]="doorIcon"></mat-icon>
+      <div>
+        {{ doorText$ | async }}
+      </div>
+    </div>
+  </mat-card>
+  <br>
+  <mat-card>
+    <div *ngIf="(carIcon$ | async) as carIcon" class="icon-text text-pink-glow flex-container">
+      <mat-icon [svgIcon]="'model-3-text'" style="width: 80px;"></mat-icon>
+      <div>
+        {{ carText$ | async }}
+      </div>
     </div>
   </mat-card>
   <br>
   <app-button-card-control
     (buttonClick)="garageButtonClicked()"
-    [buttonText]="'Open/Close'"
-    [titleIcon]="'garage'"
-    [titleText]="'Garage'"
+    [buttonText]="(doorButtonText$ | async) ?? 'kein Zugriff'"
+    [titleIcon]="''"
+    [titleText]="'Tor'"
   >
   </app-button-card-control>
 </ng-container>
