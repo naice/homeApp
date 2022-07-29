@@ -13,6 +13,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { GarageControlComponent } from './components/home-controls/garage-control/garage-control.component';
 import { TemperaturesComponent } from './components/home-controls/temperatures/temperatures.component';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { TemperaturesComponent } from './components/home-controls/temperatures/t
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
+    NgChartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

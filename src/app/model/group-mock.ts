@@ -92,13 +92,15 @@ export const groupTemps: HomeControlConfig = {
   name: "Temperaturen",
   homeControlType: TemperaturesComponent,
   config: {
-
+    bmp280Sensors: [{
+      name: "Büro-Jens"
+    }],
   } as TemperaturesComponentConfig
 }
 
 export const groupsMock: HomeControlConfig[] = [
   //groupMock01,
   //groupMock02,
+  groupTemps,
   groupMock03,
-  groupTemps
 ];
