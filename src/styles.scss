@@ -25,12 +25,18 @@ body {
   align-items: center;
 }
 
+.mat-expansion-panel {
+  max-width: 400px;
+  background-color: $background02;
+  .mat-expansion-indicator {
+    color: $foregroundA;
+    fill: $foregroundA;
+  }
+}
+.mat-expansion-indicator::after { color: $foregroundA; }
 .mat-card {
   max-width: 400px;
   background-color: $background02;
-}
-.mat-slide-toggle-thumb {
-  box-shadow: 0 0 10px $foregroundA;
 }
 
 .mat-slider-notrack {

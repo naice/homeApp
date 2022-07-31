@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartConfiguration } from 'chart.js';
-import { TemperaturesStore } from './store';
+import { TemperatureSensorState, TemperaturesStore } from './store';
 
 export interface BMP280Sensor {
   name: string;
@@ -19,29 +19,46 @@ export interface TemperaturesComponentConfig {
   ]
 })
 export class TemperaturesComponent implements OnInit {
-  public barChartLegend = true;
-  public barChartPlugins = [];
-
-  public barChartData: ChartConfiguration<'bar'>['data'] = {
-    labels: [ '2006', '2007', '2008', '2009', '2010', '2011', '2012' ],
-    datasets: [
-      { data: [ 65, 59, 80, 81, 56, 55, 40 ], label: 'Series A' },
-      { data: [ 28, 48, 40, 19, 86, 27, 90 ], label: 'Series B' }
-    ]
-  };
-
+  public barChartPlugins: ChartConfiguration<'bar'>['plugins'] = [];
   public barChartOptions: ChartConfiguration<'bar'>['options'] = {
-    responsive: false,
-    borderColor: 'transparent',
-    backgroundColor: '#ff0000'
+    responsive: true,
+    borderColor: '#ffffff',
+    backgroundColor: '#f92aad',
+    animation: false,
+    color: '#ffffff',
+    normalized: false,
+    scales: {
+      y: {
+        ticks: {
+          color: "#6d77b3",
+          callback: function(this, value, idx) {
+            return this.getLabelForValue(value as number) + "°C";
+          }
+        }
+      },
+      x: {
+        ticks: {
+          color: "#6d77b3",
+          callback: function(this, value, idx) {
+            // return idx % 4 == 0 ? this.getLabelForValue(value as  number) : '';
+            return "";
+          }
+        }
+      }
+    },
   };
 
+  public tempSensors$ = this.store.select((s) => s.tempSensors);
 
   constructor(
     protected readonly store: TemperaturesStore,
   ) { }
 
   ngOnInit(): void {
+  }
+
+  public trackBySensorName(index: number, state: TemperatureSensorState): string {
+    return state.name;
   }
 
 }

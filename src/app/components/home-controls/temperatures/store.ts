@@ -1,7 +1,9 @@
 import { state } from "@angular/animations";
 import { Inject, Injectable } from "@angular/core";
 import { ComponentStore, tapResponse } from "@ngrx/component-store";
-import { combineLatest, forkJoin, interval, Observable, of } from "rxjs";
+import { ChartConfiguration } from "chart.js";
+import * as moment from "moment";
+import { combineLatest, forkJoin, interval, Observable, of, timer } from "rxjs";
 import { concatMap, mergeMap } from "rxjs/operators";
 import { GROUP_CONFIG } from "src/app/model/home-control-store";
 import { InfluxDBService, InfluxSerie } from "src/app/services/influx-db.service";
@@ -13,16 +15,18 @@ export interface TemperatureState
 {
   temp?: number,
   pressure?: number,
-  timestamp: string,
+  timestamp: Date,
 }
 
 export interface TemperatureSensorState
 {
   name: string,
   states?: TemperatureState[],
+  chartData?: ChartConfiguration<'bar'>['data'],
 }
 
 export interface TemperaturesState {
+  sensorsConfig: string[]
   tempSensors: TemperatureSensorState[],
   error?: string,
 }
@@ -34,20 +38,29 @@ export class TemperaturesStore extends ComponentStore<TemperaturesState> {
       protected readonly tempsConfig: TemperaturesComponentConfig,
       protected readonly influx: InfluxDBService,
     ) {
-      super({ tempSensors: tempsConfig.bmp280Sensors, ...tempsConfig, });
+      super({ tempSensors:[], sensorsConfig: tempsConfig.bmp280Sensors.map((s) => s.name), ...tempsConfig, });
     }
 
     private setError = this.updater((state, error: string) => ({...state, error }));
 
     private setSeries = this.updater((state, series: InfluxSerie[][]) => {
       const nState: TemperaturesState = {...state};
+      nState.tempSensors = [];
 
-      nState.tempSensors.forEach((sensor) => {
-        const serie = this.findSeries(series, sensor.name);
+      nState.sensorsConfig.forEach((sensor) => {
+        const serie = this.findSeries(series, sensor);
         if (!serie) {
           return;
         }
-        sensor.states = serie.values.map((value) => ({ timestamp: value[0] as string, temp: value[2] as number }));
+        const states = serie.values.map((value) => ({ timestamp: new Date(value[0]), temp: value[2] as number }));
+        const chartData = {
+          labels: states.map((sens) => moment(sens.timestamp).fromNow()) ?? [],
+          datasets: [
+            { data: states.map((sens) => sens.temp ?? 0) ?? [], label: 'Temperatur' },
+          ]
+        };
+
+        nState.tempSensors.push({ name: sensor, states, chartData });
       });
 
       return nState;
@@ -66,12 +79,12 @@ export class TemperaturesStore extends ComponentStore<TemperaturesState> {
       return serie;
     }
 
-    private sensors$ = this.select((state) => state.tempSensors);
+    private sensorsConfig$ = this.select((state) => state.sensorsConfig);
 
     public temps$ = this.effect(() =>
-      combineLatest([this.sensors$, interval(10000)]).pipe(
+      combineLatest([this.sensorsConfig$, timer(0, 10000)]).pipe(
         concatMap(([sensors]) =>
-          forkJoin(sensors.map((sensor) => this.influx.getTemperatures(sensor.name))).pipe(
+          forkJoin(sensors.map((sensor) => this.influx.getTemperatures(sensor))).pipe(
             tapResponse((series) => this.setSeries(series),
             (e: string) => this.setError(e))
           )

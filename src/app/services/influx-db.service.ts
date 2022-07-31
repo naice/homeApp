@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -32,7 +32,12 @@ export class InfluxDBService {
       .set("q", q);
     return this.http.post<InfluxMeasureResponse>(
       "http://192.168.178.88:8086/query",
-      body.toString()
+      body.toString(),
+      {
+        headers: {
+          ["Content-Type"]: "application/x-www-form-urlencoded",
+        }
+      }
     );
   }
 
