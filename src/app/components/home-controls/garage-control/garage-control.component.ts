@@ -40,10 +40,20 @@ export class GarageControlComponent implements OnInit, OnDestroy {
       return "alert-decagram";
     })
   );
-  public carText$ = this.carState$.pipe(
-    map((carState) => {
+  public carText$ = this.data$.pipe(
+    map((data) => {
+      const carState = data?.carState;
       if (carState === GarageCarState.CHARGING) {
         return "Lädt";
+      }
+      if (carState === GarageCarState.CHARGED) {
+        let text = "Geladen";
+        if (data?.session_energy_wh) {
+          const kwh = data.session_energy_wh / 1000;
+          const eur = kwh * 0.28;
+          text = kwh.toFixed(1) + "kWh / " + eur.toFixed(2) + "€ - Geladen";
+        }
+        return text;
       }
       if (carState === GarageCarState.PARKING) {
         return "Parkt";

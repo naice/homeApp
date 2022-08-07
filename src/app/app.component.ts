@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatDrawer } from '@angular/material/sidenav';
 import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
 import { AppStore } from './model/app.store';
@@ -38,6 +39,11 @@ export class AppComponent {
       return;
     }
     this.selectedHomeControlConfig.next(updatedSelection);
+  }
+
+  public groupClicked(group: HomeControlConfig, drawer: MatDrawer): void {
+     this.selectedHomeControlConfig.next(group);
+     drawer.close();
   }
 }
 

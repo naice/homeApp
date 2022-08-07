@@ -25,6 +25,6 @@
   >
   </app-button-card-control>
 </ng-container>
-<ng-container *ngIf="isLoading$  | async">
+<ng-container *ngIf="(isLoading$  | async)">
   Loading... {{ (state$ | async)?.error }}
 </ng-container>

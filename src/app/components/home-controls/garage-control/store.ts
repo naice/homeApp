@@ -11,6 +11,7 @@ import { GarageControlConfig } from "./config";
 export enum GarageCarState {
   EMPTY = "EMPTY",
   CHARGING = "CHARGING",
+  CHARGED = "CHARGED",
   PARKING = "PARKING",
   UNKNOWN = "UNKNOWN",
 }
@@ -22,6 +23,8 @@ interface GarageESP {
 
 export interface GarageData {
   vehicle_connected?: boolean,
+  contactor_closed?: boolean,
+  session_energy_wh?: number,
   distance?: number,
   garageClosed?: number,
   open?: boolean,
@@ -33,6 +36,12 @@ export interface GarageState extends GarageControlConfig {
   error?: string;
   registerObjects: (RegisterObject | undefined)[];
   data?: GarageData;
+}
+
+interface WallboxVitals {
+  vehicle_connected: boolean,
+  contactor_closed: boolean,
+  session_energy_wh: number,
 }
 
 @Injectable()
@@ -50,7 +59,10 @@ export class GarageStore extends ComponentStore<GarageState> {
     public tryUnsetIsLoading = this.updater((state) => (
       {
         ...state,
-        isLoading: state.registerObjects.length <= 0,
+        isLoading:
+          state.registerObjects.length <= 0 ||
+          state.data === undefined ||
+          state.data === null
       }
     ));
     public setRegisterObjects = this.updater((state, registerObjects: (RegisterObject | undefined)[]) => (
@@ -74,7 +86,7 @@ export class GarageStore extends ComponentStore<GarageState> {
         }
         return combineLatest([
           this.registerService.request<GarageESP>(garageESP, "GET_info"),
-          this.registerService.request<{ vehicle_connected: boolean }>(wallbox, "GET_VITALS"),
+          this.registerService.request<WallboxVitals>(wallbox, "GET_VITALS"),
         ]).pipe(
           tapResponse(([garage, wallbox]) =>
           {
@@ -107,9 +119,16 @@ export class GarageStore extends ComponentStore<GarageState> {
       )
     );
 
-    public getCarState(garage: { distance: number; } | undefined, wallbox: { vehicle_connected: boolean; } | undefined): GarageCarState {
-      if (wallbox?.vehicle_connected !== undefined && wallbox.vehicle_connected) {
+    public getCarState(garage: { distance: number; } | undefined, wallbox: WallboxVitals | undefined): GarageCarState {
+      if (wallbox !== undefined &&
+          wallbox.vehicle_connected &&
+          wallbox.contactor_closed) {
         return GarageCarState.CHARGING;
+      }
+      if (wallbox !== undefined &&
+          wallbox.vehicle_connected &&
+          !wallbox.contactor_closed) {
+        return GarageCarState.CHARGED;
       }
       if (garage?.distance !== undefined && garage.distance < 120 && garage.distance > 0) {
         return GarageCarState.PARKING;
