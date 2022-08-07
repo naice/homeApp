@@ -1,7 +1,7 @@
 import { Injectable, InjectionToken, Injector, ReflectiveInjector, StaticProvider, Type } from "@angular/core";
 import { ComponentStore } from "@ngrx/component-store";
 import { map } from "rxjs/operators";
-import { groupMock03 } from "./group-mock";
+import { groupGarage } from "./home-controls-config";
 
 export abstract class ActionHandler {
   public abstract action(): void;
@@ -20,7 +20,7 @@ export interface HomeControlConfig {
 @Injectable()
 export class HomeControlStore extends ComponentStore<HomeControlConfig> {
     constructor(protected injector: Injector) {
-      super(groupMock03);
+      super(groupGarage);
     }
 
     public outletInfo$ = this.state$.pipe(

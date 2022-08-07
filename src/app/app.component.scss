@@ -22,5 +22,6 @@
   }
 }
 
-.navigation-item {
+::ng-deep .mat-drawer-backdrop.mat-drawer-shown {
+  background-color: rgba(53, 53, 53, 0.44);
 }

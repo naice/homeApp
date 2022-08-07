@@ -10,6 +10,16 @@ export interface TemperaturesComponentConfig {
   bmp280Sensors: BMP280Sensor[];
 }
 
+const WeekDayMap = [
+  "SO",
+  "MO",
+  "DI",
+  "MI",
+  "DO",
+  "FR",
+  "SA"
+];
+
 @Component({
   selector: 'app-temperatures',
   templateUrl: './temperatures.component.html',
@@ -19,35 +29,6 @@ export interface TemperaturesComponentConfig {
   ]
 })
 export class TemperaturesComponent implements OnInit {
-  public barChartPlugins: ChartConfiguration<'bar'>['plugins'] = [];
-  public barChartOptions: ChartConfiguration<'bar'>['options'] = {
-    responsive: true,
-    borderColor: '#ffffff',
-    backgroundColor: '#f92aad',
-    animation: false,
-    color: '#ffffff',
-    normalized: false,
-    scales: {
-      y: {
-        ticks: {
-          color: "#6d77b3",
-          callback: function(this, value, idx) {
-            return this.getLabelForValue(value as number) + "°C";
-          }
-        }
-      },
-      x: {
-        ticks: {
-          color: "#6d77b3",
-          callback: function(this, value, idx) {
-            // return idx % 4 == 0 ? this.getLabelForValue(value as  number) : '';
-            return "";
-          }
-        }
-      }
-    },
-  };
-
   public tempSensors$ = this.store.select((s) => s.tempSensors);
 
   constructor(
@@ -55,6 +36,14 @@ export class TemperaturesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+  }
+
+  public toWeekDay(date: Date): string {
+    const dt = new Date();
+    if (date.getDay() === dt.getDay()) {
+      return "Heute";
+    }
+    return WeekDayMap[date.getDay()];
   }
 
   public trackBySensorName(index: number, state: TemperatureSensorState): string {

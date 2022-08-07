@@ -56,3 +56,15 @@ body {
   background-color: $background01;
   color: $foregroundA;
 }
+
+.mat-expansion-panel-header,
+.mat-expansion-panel-header.mat-expanded,
+.mat-expansion-panel-header.mat-expanded:hover,
+.mat-expansion-panel-header:hover,
+.mat-expansion-panel-header.mat-expanded:focus,
+.mat-expansion-panel-header.mat-expanded:focus:not([aria-disabled=true]),
+.mat-expansion-panel .mat-expansion-panel-header.cdk-keyboard-focused:not([aria-disabled=true]),
+.mat-expansion-panel .mat-expansion-panel-header.cdk-keyboard-focused:not([aria-disabled=true]), .mat-expansion-panel .mat-expansion-panel-header.cdk-program-focused:not([aria-disabled=true]), .mat-expansion-panel:not(.mat-expanded) .mat-expansion-panel-header:hover:not([aria-disabled=true]),
+.mat-expansion-panel-header.mat-expanded:hover:not([aria-disabled=true]) {
+  background-color: $background02;
+}

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { ComponentStore } from "@ngrx/component-store";
 import { map } from "rxjs/operators";
 import { HomeControlConfig } from "./home-control-store";
-import { groupsMock } from "./group-mock";
+import { groupsConfig } from "./home-controls-config";
 
 export interface AppState {
   groups: HomeControlConfig[]
@@ -11,7 +11,7 @@ export interface AppState {
 @Injectable()
 export class AppStore extends ComponentStore<AppState> {
     constructor() {
-      super({ groups: groupsMock });
+      super({ groups: groupsConfig });
     }
 
     public groups$ = this.state$.pipe(

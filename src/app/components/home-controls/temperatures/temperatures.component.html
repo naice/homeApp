@@ -1,26 +1,39 @@
 <ng-container *ngIf="(tempSensors$ | async) as tempSensors">
   <div *ngFor="let data of tempSensors; trackBy: trackBySensorName">
-    <mat-expansion-panel>
+    <mat-expansion-panel [expanded]="true">
       <mat-expansion-panel-header>
         <mat-panel-title class="icon-text text-pink-glow">
           {{ data.name }}
         </mat-panel-title>
         <mat-panel-description class="icon-text text-pink-glow">
-          {{ data.states?.[(data.states?.length ?? 1) -1]?.temp }} °C
+          {{ (data.states?.[(data.states?.length ?? 1) -1]?.temp)?.toFixed(1) }} °C
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <div>
-        <ng-container *ngIf="data.chartData">
+      <ng-container *ngIf="data.chartData">
+        <div class="chart-container">
           <canvas baseChart
                   [data]="data.chartData"
-                  [options]="barChartOptions"
-                  [plugins]="barChartPlugins"
+                  [options]="data.chartOptions"
                   [legend]="false"
-                  [type]="'bar'">
+                  [type]="'line'">
           </canvas>
-        </ng-container>
-      </div>
+          <div class="axis">
+            <div
+              *ngFor="let tempdate of data.states"
+              class="tick"
+            >
+              <div class="value">
+                {{tempdate.temp.toFixed(1)}} °C
+              </div>
+              <div class="dayOfWeek">
+                <span>{{ toWeekDay(tempdate.timestamp) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
     </mat-expansion-panel>
+    <br/>
   </div>
 </ng-container>
 

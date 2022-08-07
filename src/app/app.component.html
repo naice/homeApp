@@ -16,7 +16,7 @@
   </div>
   <div class="app-layout-drawer">
     <mat-drawer-container autosize>
-      <mat-drawer #drawer mode="side">
+      <mat-drawer #drawer mode="over">
         <mat-nav-list>
           <mat-list-item *ngFor="let group of groups$ | async" (click)="selectedHomeControlConfig.next(group)">
             <div mat-line class="navigation-item text-blue-glow">

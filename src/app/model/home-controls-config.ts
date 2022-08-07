@@ -1,3 +1,4 @@
+import { environment } from "src/environments/environment";
 import { GarageControlConfig } from "../components/home-controls/garage-control/config";
 import { GarageControlComponent } from "../components/home-controls/garage-control/garage-control.component";
 import { TemperaturesComponent, TemperaturesComponentConfig } from "../components/home-controls/temperatures/temperatures.component";
@@ -76,7 +77,7 @@ import { HomeControlConfig } from "./home-control-store";
 //     },
 //   ]
 // }
-export const groupMock03: HomeControlConfig = {
+export const groupGarage: HomeControlConfig = {
   id: "mock-group-03",
   icon: "garage",
   name: "Garage",
@@ -98,9 +99,18 @@ export const groupTemps: HomeControlConfig = {
   } as TemperaturesComponentConfig
 }
 
-export const groupsMock: HomeControlConfig[] = [
-  //groupMock01,
-  //groupMock02,
-  groupTemps,
-  groupMock03,
-];
+const getGroups = (): HomeControlConfig[] => {
+  if (environment.production) {
+    return [
+      groupGarage,
+      groupTemps,
+    ];
+  }
+  return [
+    groupTemps,
+    groupGarage,
+  ];
+};
+
+export const groupsConfig: HomeControlConfig[] =
+  getGroups();

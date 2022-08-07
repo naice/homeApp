@@ -42,7 +42,7 @@ export class InfluxDBService {
   }
 
   public getTemperatures(sensorName: string): Observable<InfluxSerie[]> {
-    return this.query("select * from bmp280_sensors..temperature where \"name\" = '"+sensorName+"' AND time > now() - 7d").pipe(
+    return this.query("select * from bmp280_sensors..temperature where \"name\" = '"+sensorName+"' AND time > now() - 6d").pipe(
       map((r) => (r?.results?.[0]?.series ?? []))
     )
   }
