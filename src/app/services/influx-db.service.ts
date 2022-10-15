@@ -46,4 +46,10 @@ export class InfluxDBService {
       map((r) => (r?.results?.[0]?.series ?? []))
     )
   }
+
+  public getVoltageMean(sensorName: string): Observable<number | undefined> {
+    return this.query("select mean(*) from bmp280_sensors..voltage where \"name\" = '"+sensorName+"' AND time > now() - 2h ").pipe(
+      map((r) => (r?.results?.[0]?.series?.[0]?.values?.[0]?.[1] as number))
+    )
+  }
 }

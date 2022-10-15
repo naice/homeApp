@@ -7,6 +7,7 @@
         </mat-panel-title>
         <mat-panel-description class="icon-text text-pink-glow">
           {{ (data.states?.[(data.states?.length ?? 1) -1]?.temp)?.toFixed(1) }} °C
+          <span class="voltage">{{data.voltage?.toFixed(1)}} V</span>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <ng-container *ngIf="data.chartData && expansionPanel.expanded">
