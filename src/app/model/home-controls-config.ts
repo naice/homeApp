@@ -107,8 +107,8 @@ const getGroups = (): HomeControlConfig[] => {
     ];
   }
   return [
-    groupTemps,
     groupGarage,
+    groupTemps,
   ];
 };
 

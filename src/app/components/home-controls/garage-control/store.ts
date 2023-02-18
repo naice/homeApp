@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { ComponentStore, tapResponse } from "@ngrx/component-store";
 import { combineLatest, EMPTY, interval, Observable, of, range } from "rxjs";
-import { map, take, concatMap, } from "rxjs/operators";
+import { map, take, concatMap, catchError, } from "rxjs/operators";
 import { GROUP_CONFIG } from "src/app/model/home-control-store";
 import { RegisterMeService, RegisterObject } from "src/app/services/register-me.service";
 import { GarageControlConfig } from "./config";
@@ -21,13 +21,10 @@ interface GarageESP {
   garageClosed: number,
 }
 
-export interface GarageData {
-  vehicle_connected?: boolean,
-  contactor_closed?: boolean,
-  session_energy_wh?: number,
-  distance?: number,
-  garageClosed?: number,
-  open?: boolean,
+export interface GarageData extends 
+    Partial<GarageESP> {
+  wbLifeTime?: WallboxLifeTime, 
+  wbVitals?: WallboxVitals, 
   carState: GarageCarState,
 }
 
@@ -42,6 +39,14 @@ interface WallboxVitals {
   vehicle_connected: boolean,
   contactor_closed: boolean,
   session_energy_wh: number,
+  uptime_s: number,
+}
+
+interface WallboxLifeTime {
+  energy_wh: number,
+  charge_starts: number,
+  uptime_s: number,
+  charging_time_s: number,
 }
 
 @Injectable()
@@ -85,14 +90,15 @@ export class GarageStore extends ComponentStore<GarageState> {
           return EMPTY;
         }
         return combineLatest([
-          this.registerService.request<GarageESP>(garageESP, "GET_info"),
-          this.registerService.request<WallboxVitals>(wallbox, "GET_VITALS"),
+          this.registerService.request<GarageESP>(garageESP, "GET_info").pipe(catchError(() => of(undefined))),
+          this.registerService.request<WallboxVitals>(wallbox, "GET_VITALS").pipe(catchError(() => of(undefined))),
+          this.registerService.request<WallboxLifeTime>(wallbox, "GET_LIFETIME").pipe(catchError(() => of(undefined))),
         ]).pipe(
-          tapResponse(([garage, wallbox]) =>
+          tapResponse(([garage, wbVitals, wbLifeTime]) =>
           {
-            const carState = this.getCarState(garage, wallbox);
+            const carState = this.getCarState(garage, wbVitals);
             this.setGarageData({
-              ...garage, ...wallbox, carState
+              ...garage, wbVitals, carState, wbLifeTime
             });
             this.tryUnsetIsLoading();
           },

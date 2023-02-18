@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, timeout } from 'rxjs/operators';
 
 interface RegisterResponse {
   register: Register;
@@ -60,16 +60,16 @@ export class RegisterMeService {
       console.log("post");
       return this.http.post<ResultType>(
         "http://192.168.178.88:4711/proxy", {
-          method: "post",  target, payload
+          method: "post",  target, payload, 
         }
-      );
+      ).pipe(timeout(2000));
     }
     if (method == "get") {
       return this.http.post<ResultType>(
         "http://192.168.178.88:4711/proxy", {
           method: "get", target
         }
-      );
+      ).pipe(timeout(2000));
     }
 
     throw Error("UNKNOWN METHOD " + method);

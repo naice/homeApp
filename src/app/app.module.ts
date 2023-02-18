@@ -14,6 +14,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { GarageControlComponent } from './components/home-controls/garage-control/garage-control.component';
 import { TemperaturesComponent } from './components/home-controls/temperatures/temperatures.component';
 import { NgChartsModule } from 'ng2-charts';
+import * as moment from 'moment';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { NgChartsModule } from 'ng2-charts';
 })
 export class AppModule {
   constructor(iconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) {
+    moment.locale("de");
     iconRegistry.addSvgIconSet(
       domSanitizer.bypassSecurityTrustResourceUrl('./assets/mdi.svg')
     );

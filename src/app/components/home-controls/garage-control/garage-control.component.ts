@@ -3,6 +3,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GarageStore, GarageCarState } from './store';
 import { map, take, takeUntil, timeout, } from "rxjs/operators";
 import { BehaviorSubject, interval, of, Subject } from 'rxjs';
+import * as moment from 'moment';
+
+const centPerKWH = 0.28;
 
 @Component({
   selector: 'app-garage-control',
@@ -47,13 +50,7 @@ export class GarageControlComponent implements OnInit, OnDestroy {
         return "Lädt";
       }
       if (carState === GarageCarState.CHARGED) {
-        let text = "Geladen";
-        if (data?.session_energy_wh) {
-          const kwh = data.session_energy_wh / 1000;
-          const eur = kwh * 0.28;
-          text = kwh.toFixed(1) + "kWh / " + eur.toFixed(2) + "€ - Geladen";
-        }
-        return text;
+        return "Geladen";
       }
       if (carState === GarageCarState.PARKING) {
         return "Parkt";
@@ -92,6 +89,63 @@ export class GarageControlComponent implements OnInit, OnDestroy {
       return "Öffnen";
     }
     return "Schließen";
+  }));
+  public softError$ = this.data$.pipe(map((data) => {
+    if (data?.wbVitals == undefined){
+      return "Tesla Wallbox antwortet nicht. (vitals)";
+    }
+    if (data?.wbLifeTime == undefined){
+      return "Tesla Wallbox antwortet nicht. (lifetime)";
+    }
+    return undefined;
+  }));
+  public wbLifeTimeHasData$ = this.data$.pipe(map((data) => {
+    if (!data?.wbLifeTime) {
+      return false;
+    }
+    return true;
+  }));
+  public wbLifeTimeEuroText$ = this.data$.pipe(map((data) => {
+    if (!data?.wbLifeTime?.energy_wh) {
+      return undefined;
+    }
+    const kwh = data.wbLifeTime.energy_wh / 1000;
+    const eur = kwh * centPerKWH;
+    return eur.toFixed(2) + " €";
+  }));
+  public wbLifeTimeKWHText$ = this.data$.pipe(map((data) => {
+    if (!data?.wbLifeTime?.energy_wh) {
+      return undefined;
+    }
+    const kwh = data.wbLifeTime.energy_wh / 1000;
+    return kwh.toFixed(1) + " kWh";
+  }));
+  public wbLifetimeChargingDurationText$ = this.data$.pipe(map((data) => {
+    if (!data?.wbLifeTime?.charging_time_s) {
+      return undefined;
+    }
+    return moment.duration(data.wbLifeTime.charging_time_s, "seconds").humanize();
+  }));
+  public wbSessionKWHText$ = this.data$.pipe(map((data) => {
+    if (!data?.wbVitals?.session_energy_wh) {
+      return undefined;
+    }
+      const kwh = data.wbVitals.session_energy_wh / 1000;
+      return kwh.toFixed(1) + " kWh";
+  }));
+  public wbSessionEuroText$ = this.data$.pipe(map((data) => {
+    if (!data?.wbVitals?.session_energy_wh) {
+      return undefined;
+    }
+      const kwh = data.wbVitals.session_energy_wh / 1000;
+      const eur = kwh * centPerKWH;
+      return eur.toFixed(2) + " €";
+  }));
+  public wbSessionUptimeText$ = this.data$.pipe(map((data) => {
+    if (!data?.wbVitals?.uptime_s) {
+      return undefined;
+    }
+    return moment.duration(data.wbVitals.uptime_s, "seconds").humanize();
   }));
 
   ngOnInit(): void {}

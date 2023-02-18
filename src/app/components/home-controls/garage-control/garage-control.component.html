@@ -24,6 +24,43 @@
     [titleText]="'Tor'"
   >
   </app-button-card-control>
+  <br>
+  <mat-card>
+    <div *ngIf="(wbLifeTimeHasData$ | async)" class="text-pink-glow">
+      <div>
+        <h4>Wallbox Statistik</h4>
+      </div>
+      <div class="flex-container">
+        <div>Letzte Ladung</div>
+        <div *ngIf="(wbSessionKWHText$ | async) as kwh" >{{ kwh }}</div>
+        <div *ngIf="!(wbSessionKWHText$ | async)" > - </div>
+        <div *ngIf="(wbSessionEuroText$ | async) as eur" >{{ eur }}</div>
+        <div *ngIf="!(wbSessionEuroText$ | async)" > - </div>
+      </div>
+      <div class="flex-container">
+        <div>Alle Ladungen</div>
+        <div> {{ wbLifeTimeKWHText$ | async }}</div>
+        <div> {{ wbLifeTimeEuroText$ | async }}</div>
+      </div>
+      <div class="flex-container">
+        <div>Gesamte Ladedauer</div>
+        <div> {{ wbLifetimeChargingDurationText$ | async }}</div>
+      </div>
+      <div class="flex-container">
+        <div>Laufzeit</div>
+        <div> {{ wbSessionUptimeText$ | async }}</div>
+      </div>
+    </div>
+  </mat-card>
+  <br>
+  <mat-card *ngIf="(softError$ | async) as softError">
+    <div class="icon-text text-pink-glow flex-container">
+      <mat-icon [svgIcon]="'alert-decagram'"></mat-icon>
+      <div>
+        {{ softError }}
+      </div>
+    </div>
+  </mat-card>
 </ng-container>
 <ng-container *ngIf="(isLoading$  | async)">
   Loading... {{ (state$ | async)?.error }}
