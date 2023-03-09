@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "deploy": "ng build && tar -zcf deploy-package.tar.gz -C dist/ . && curl -v -F file=@deploy-package.tar.gz -H JM-PROJECT-NAME:homeApp http://192.168.178.88:4711/deploy",
+    "publish": "ng build && tar -zcf deploy-package.tar.gz -C dist/ . && curl -v -F file=@deploy-package.tar.gz -H JM-PROJECT-NAME:homeApp http://192.168.178.88:4711/deploy",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

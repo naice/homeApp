@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GarageStore, GarageCarState } from './store';
-import { map, take, takeUntil, timeout, } from "rxjs/operators";
+import { debounceTime, map, take, takeUntil, timeout, } from "rxjs/operators";
 import { BehaviorSubject, interval, of, Subject } from 'rxjs';
 import * as moment from 'moment';
 
@@ -26,7 +26,8 @@ export class GarageControlComponent implements OnInit, OnDestroy {
   public destory$ = this.destroyS.asObservable();
 
   public state$ = this.store.state$;
-  public isLoading$ = this.store.select((state) => state.isLoading);
+  public error$ = this.store.select((state) => state.error);
+  public isLoading$ = this.store.select((state) => state.isLoading).pipe(debounceTime(3000));
   public data$ = this.store.select((state) => state.data);
   public carState$ = this.store.select((state) => state.data?.carState);
   public carIcon$ = this.carState$.pipe(
@@ -63,7 +64,6 @@ export class GarageControlComponent implements OnInit, OnDestroy {
   );
   public doorState$ = this.store.select((state) => state.data?.garageClosed);
   public doorIcon$ = this.doorState$.pipe(map((open) => {
-    console.log(open);
     if (open === undefined || open === null) {
       return "alert-decagram";
     }

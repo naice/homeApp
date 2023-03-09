@@ -1,4 +1,4 @@
-<ng-container *ngIf="!(isLoading$  | async)">
+<ng-container *ngIf="true">
   <mat-card>
     <div *ngIf="(doorIcon$ | async) as doorIcon" class="icon-text text-pink-glow flex-container">
       <mat-icon [svgIcon]="doorIcon"></mat-icon>
@@ -63,5 +63,5 @@
   </mat-card>
 </ng-container>
 <ng-container *ngIf="(isLoading$  | async)">
-  Loading... {{ (state$ | async)?.error }}
+  Loading... <span *ngIf="(error$ | async) as error" style="color:red; font-weight: bold;">{{error}}</span>
 </ng-container>

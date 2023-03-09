@@ -40,7 +40,6 @@ export class RegisterMeService {
   public getRegisterObject(name: string): Observable<RegisterObject | undefined> {
     return this.getRegister().pipe(
       map((register) => {
-        console.log(register)
         return register?.find((obj) => obj.name === name)
       })
     );
@@ -57,10 +56,9 @@ export class RegisterMeService {
     }
     const target = `http://${obj.ip}${endpoint}`;
     if (method == "post") {
-      console.log("post");
       return this.http.post<ResultType>(
         "http://192.168.178.88:4711/proxy", {
-          method: "post",  target, payload, 
+          method: "post",  target, payload,
         }
       ).pipe(timeout(2000));
     }
