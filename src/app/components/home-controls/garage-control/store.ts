@@ -1,10 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { ComponentStore, tapResponse } from "@ngrx/component-store";
-import { combineLatest, EMPTY, interval, Observable, of, range } from "rxjs";
-import { map, take, concatMap, catchError, } from "rxjs/operators";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import { GROUP_CONFIG } from "src/app/model/home-control-store";
-import { RegisterMeService, RegisterObject } from "src/app/services/register-me.service";
+import { GarageESP, RegisterMeService, RegisterObject, WallboxLifeTime, WallboxVitals } from "src/app/services/register-me.service";
 import { GarageControlConfig } from "./config";
 import { LSCache } from "src/app/services/local-storage-cache.service";
 
@@ -17,11 +17,6 @@ export enum GarageCarState {
   UNKNOWN = "UNKNOWN",
 }
 
-interface GarageESP {
-  distance: number,
-  garageClosed: number,
-}
-
 export interface GarageData extends
     Partial<GarageESP> {
   wbLifeTime?: WallboxLifeTime,
@@ -32,23 +27,19 @@ export interface GarageData extends
 export interface GarageState extends GarageControlConfig {
   isLoading: boolean;
   error?: string;
-  registerObjects: (RegisterObject | undefined)[];
   data?: GarageData;
 }
 
-interface WallboxVitals {
-  vehicle_connected: boolean,
-  contactor_closed: boolean,
-  session_energy_wh: number,
-  uptime_s: number,
-}
-
-interface WallboxLifeTime {
-  energy_wh: number,
-  charge_starts: number,
-  uptime_s: number,
-  charging_time_s: number,
-}
+const garageRegisterObject: RegisterObject = {
+  "name": "GarageESP",
+  "endpoints": {
+    "POST_relay": "/relay",
+    "GET_info": "/"
+  },
+  "ip": "192.168.178.104",
+  "updated": 1678728871202,
+  "created": 1657555041351
+};
 
 @Injectable()
 export class GarageStore extends ComponentStore<GarageState> {
@@ -64,8 +55,7 @@ export class GarageStore extends ComponentStore<GarageState> {
   ) {
     super({
       ...garageConfig,
-      isLoading: true,
-      registerObjects:[]
+      isLoading: true
     });
 
     this.setGarageData(
@@ -81,7 +71,6 @@ export class GarageStore extends ComponentStore<GarageState> {
     {
       ...state,
       isLoading:
-        state.registerObjects.length <= 0 ||
         state.data === undefined ||
         state.data === null
     }
@@ -103,50 +92,28 @@ export class GarageStore extends ComponentStore<GarageState> {
     };
   }
 
-  private registerObjects$ = this.select((state) => state.registerObjects);
-  private registerNames$ = this.select((state) => state.registerNames);
-
   public updateData = this.effect(() =>
-    combineLatest([this.registerObjects$, interval(2000)]).pipe(
-      concatMap(([[garageESP, wallbox]]) => {
-      if  (!garageESP || !wallbox) {
-        return EMPTY;
-      }
-      return combineLatest([
-        this.registerService.request<GarageESP>(garageESP, "GET_info").pipe(catchError(() => of(this.garageESPCache.value))),
-        this.registerService.request<WallboxVitals>(wallbox, "GET_VITALS").pipe(catchError(() => of(this.wallboxVitalsCache.value))),
-        this.registerService.request<WallboxLifeTime>(wallbox, "GET_LIFETIME").pipe(catchError(() => of(this.wallboxLifeTimeCache.value))),
-      ]).pipe(
-        tapResponse(([garage, wbVitals, wbLifeTime]) =>
-        {
-          this.garageESPCache.value = garage;
-          this.wallboxLifeTimeCache.value = wbLifeTime;
-          this.wallboxVitalsCache.value = wbVitals;
-          this.setGarageData(
-            this.buildGarageData(garage, wbVitals, wbLifeTime)
-          );
-          this.tryUnsetIsLoading();
-        },
-        (e: string) => this.setError(e))
-      );
-    }))
-  );
-
-  public updateRegister = this.effect(() =>
-    this.registerNames$.pipe(
-      concatMap((registerNames) => {
-        this.setIsLoading(true);
-        return this.registerService.getRegisterObjects(registerNames)
-          .pipe(
-            tapResponse(obj => {
-                this.setRegisterObjects(obj);
-                this.tryUnsetIsLoading();
-              },
-              (e: string) => this.setError(e)
-            )
-          )
+    this.registerService.garageStream$.pipe(
+      tapResponse((frame) =>
+      {
+        let garage = this.garageESPCache.value;
+        if (frame.data?.garageESP) {
+          this.garageESPCache.value = garage = frame.data?.garageESP;
         }
-      )
+        let wbVitals = this.wallboxVitalsCache.value;
+        if (frame.data?.wallboxVitals) {
+          this.wallboxVitalsCache.value = wbVitals = frame.data?.wallboxVitals;
+        }
+        let wbLifeTime =  this.wallboxLifeTimeCache.value;
+        if (frame.data?.garageESP) {
+          this.wallboxLifeTimeCache.value = wbLifeTime = frame.data?.wallboxLifetime;
+        }
+        this.setGarageData(
+          this.buildGarageData(garage, wbVitals, wbLifeTime)
+        );
+        this.tryUnsetIsLoading();
+      },
+      (e: string) => this.setError(e))
     )
   );
 
@@ -171,13 +138,8 @@ export class GarageStore extends ComponentStore<GarageState> {
   }
 
   public toggleGarageDoor(): Observable<boolean> {
-    return this.registerObjects$.pipe(take(1), concatMap(([garage]) => {
-      if (!garage) {
-        return of(false);
-      }
-      return this.registerService.request(garage, "POST_relay", { "toggle": true })
-        .pipe(map((result) => (result !== undefined)));
-    }));
-
+    return this.registerService.request(garageRegisterObject,
+      "POST_relay", { "toggle": true })
+      .pipe(map((result) => (result !== undefined)));
   }
 }
