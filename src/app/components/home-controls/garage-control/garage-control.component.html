@@ -63,5 +63,5 @@
   </mat-card>
 </ng-container>
 <ng-container *ngIf="(isLoading$  | async)">
-  Loading... <span *ngIf="(error$ | async) as error" style="color:red; font-weight: bold;">{{error}}</span>
+  Cached Data... <span *ngIf="(error$ | async) as error" style="color:red; font-weight: bold;">{{error}}</span>
 </ng-container>
